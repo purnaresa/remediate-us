@@ -1,0 +1,51 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+        "RemediationConfigurationEC2EBSEncryptionByDefault": {
+            "Type": "AWS::Config::RemediationConfiguration",
+            "Properties": {
+                "ConfigRuleName": "ec2-ebs-encryption-by-default",
+                "TargetId": "AWSConfigRemediation-EnableEbsEncryptionByDefault",
+                "TargetType": "SSM_DOCUMENT",
+                "Automatic": "true",
+                "MaximumAutomaticAttempts": 5,
+                "RetryAttemptSeconds": 60,
+                "Parameters": {
+                    "AutomationAssumeRole": {
+                        "StaticValue": {
+                            "Values": [
+                                {
+                                    "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/Custom-SecurityRemediationRole"
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "b9960d05-b199-496d-9dfb-770c2991e2c8"
+                }
+            },
+            "DependsOn": [
+                "ConfigRuleEC2EBSEncryptionByDefault"
+            ]
+        },
+        "ConfigRuleEC2EBSEncryptionByDefault": {
+            "Type": "AWS::Config::ConfigRule",
+            "Properties": {
+                "ConfigRuleName": "ec2-ebs-encryption-by-default",
+                "Description": "Check that Amazon Elastic Block Store (EBS) encryption is enabled by default.  The rule is NON_COMPLIANT if the encryption is not enabled.",
+                "Source": {
+                    "Owner": "AWS",
+                    "SourceIdentifier": "EC2_EBS_ENCRYPTION_BY_DEFAULT"
+                }
+            },
+            "Metadata": {
+                "AWS::CloudFormation::Designer": {
+                    "id": "91e715a9-c2b4-40e1-a9e7-7f7e2e8edef6"
+                }
+            }
+        }
+    }
+}

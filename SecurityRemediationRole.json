@@ -1,0 +1,31 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Resources": {
+        "SecurityRemediationRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName": "Custom-SecurityRemediationRole",
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": [
+                                    "ssm.amazonaws.com"
+                                ]
+                            },
+                            "Action": [
+                                "sts:AssumeRole"
+                            ]
+                        }
+                    ]
+                },
+                "Description": "Role for AWS Config finding security remediation",
+                "ManagedPolicyArns": [
+                    "arn:aws:iam::aws:policy/PowerUserAccess"
+                ]
+            }
+        }
+    }
+}
