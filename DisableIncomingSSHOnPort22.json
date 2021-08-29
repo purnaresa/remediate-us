@@ -1,22 +1,27 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Resources": {
-        "ConfigRuleEC2EBSEncryptionByDefault": {
+        "ConfigRuleDisableIncomingSSHOnPort22": {
             "Type": "AWS::Config::ConfigRule",
             "Properties": {
-                "ConfigRuleName": "Custom_Baseline_EC2_EBS_Encryption_By_Default",
-                "Description": "Check that Amazon Elastic Block Store (EBS) encryption is enabled by default.  The rule is NON_COMPLIANT if the encryption is not enabled.",
+                "ConfigRuleName": "Custom_Baseline_Incoming_SSH_Disabled",
+                "Description": "Checks whether security groups that are in use disallow unrestricted incoming SSH traffic.",
+                "Scope": {
+                    "ComplianceResourceTypes": [
+                        "AWS::EC2::SecurityGroup"
+                    ]
+                },
                 "Source": {
                     "Owner": "AWS",
-                    "SourceIdentifier": "EC2_EBS_ENCRYPTION_BY_DEFAULT"
+                    "SourceIdentifier": "INCOMING_SSH_DISABLED"
                 }
             }
         },
-        "RemediationConfigurationEC2EBSEncryptionByDefault": {
+        "RemediationConfigurationDisableIncomingSSHOnPort22": {
             "Type": "AWS::Config::RemediationConfiguration",
             "Properties": {
-                "ConfigRuleName": "Custom_Baseline_EC2_EBS_Encryption_By_Default",
-                "TargetId": "AWSConfigRemediation-EnableEbsEncryptionByDefault",
+                "ConfigRuleName": "Custom_Baseline_Incoming_SSH_Disabled",
+                "TargetId": "AWS-DisableIncomingSSHOnPort22",
                 "TargetType": "SSM_DOCUMENT",
                 "Automatic": "true",
                 "MaximumAutomaticAttempts": 5,
@@ -30,11 +35,16 @@
                                 }
                             ]
                         }
+                    },
+                    "SecurityGroupIds": {
+                        "ResourceValue": {
+                            "Value": "RESOURCE_ID"
+                        }
                     }
                 }
             },
             "DependsOn": [
-                "ConfigRuleEC2EBSEncryptionByDefault"
+                "ConfigRuleDisableIncomingSSHOnPort22"
             ]
         }
     }
